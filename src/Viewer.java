@@ -1,20 +1,17 @@
-// Based on: http://blog.rogach.org/2015/08/how-to-create-your-own-simple-3d-render.html
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Path2D;
-import java.awt.image.BufferedImage;
-import java.lang.reflect.Array;
+import java.util.List;
 import java.util.ArrayList;
+import java.awt.geom.*;
+import java.awt.image.BufferedImage;
 
 public class Viewer {
-    JFrame frame;
-    Container pane;
-    JSlider headingSlider, pitchSlider;
-    JPanel renderPanel;
-    ArrayList<Triangle> tris;
-
+    ArrayList<Triangle> triangles;
     public Viewer(ArrayList<Triangle> triangles) {
+        this.triangles = triangles;
+    }
+
+    public void render() {
         JFrame frame = new JFrame();
         Container pane = frame.getContentPane();
         pane.setLayout(new BorderLayout());
@@ -27,42 +24,14 @@ public class Viewer {
         JSlider pitchSlider = new JSlider(SwingConstants.VERTICAL, -90, 90, 0);
         pane.add(pitchSlider, BorderLayout.EAST);
 
-        tris = triangles;
-        render();
-
-        pane.add(renderPanel, BorderLayout.CENTER);
-
-        headingSlider.addChangeListener(e -> renderPanel.repaint());
-        pitchSlider.addChangeListener(e -> renderPanel.repaint());
-
-        frame.setSize(400, 400);
-        frame.setVisible(true);
-    }
-
-    /**
-     * XY rotation matrix:
-     * ⎡cosθ    -sinθ   0⎤
-     * ⎢−sinθ   cosθ    0⎥
-     * ⎣0       0       1⎦
-     *
-     * YZ rotation matrix:
-     * ⎡1       0       0⎤
-     * ⎢0    cosθ    sinθ⎥
-     * ⎣0    −sinθ   cosθ⎦
-     *
-     * XZ rotation matrix:
-     * ⎡cosθ    0   -sinθ⎤
-     * ⎢1       1       0⎥
-     * ⎣sinθ    0    cosθ⎦
-     */
-    public void render() {
         // panel to display render results
-        renderPanel = new JPanel() {
+        JPanel renderPanel = new JPanel() {
             public void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setColor(Color.BLACK);
                 g2.fillRect(0, 0, getWidth(), getHeight());
 
+                ArrayList<Triangle> tris = triangles;
                 for (int i = 0; i < 4; i++) {
                     tris = inflate(tris);
                 }
@@ -142,6 +111,13 @@ public class Viewer {
                 g2.drawImage(img, 0, 0, null);
             }
         };
+        pane.add(renderPanel, BorderLayout.CENTER);
+
+        headingSlider.addChangeListener(e -> renderPanel.repaint());
+        pitchSlider.addChangeListener(e -> renderPanel.repaint());
+
+        frame.setSize(400, 400);
+        frame.setVisible(true);
     }
 
     public static Color getShade(Color color, double shade) {
@@ -156,7 +132,7 @@ public class Viewer {
         return new Color(red, green, blue);
     }
 
-    public static ArrayList<Triangle> inflate(ArrayList<Triangle> tris) {
+    public static ArrayList<Triangle> inflate(List<Triangle> tris) {
         ArrayList<Triangle> result = new ArrayList<>();
         for (Triangle t : tris) {
             Vertex m1 = new Vertex((t.v1.x + t.v2.x)/2, (t.v1.y + t.v2.y)/2, (t.v1.z + t.v2.z)/2);

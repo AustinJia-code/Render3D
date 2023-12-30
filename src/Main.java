@@ -22,5 +22,6 @@ public class Main {
                 Color.BLUE));
 
         Viewer viewer = new Viewer(tris);
+        viewer.render();
     }
 }
