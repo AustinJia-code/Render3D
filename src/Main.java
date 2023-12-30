@@ -21,7 +21,6 @@ public class Main {
                 new Vertex(-100, -100, 100),
                 Color.BLUE));
 
-        Viewer viewer = new Viewer();
-        viewer.render(tris);
+        Viewer viewer = new Viewer(tris);
     }
 }
