@@ -21,9 +21,10 @@ public class Main {
                 Color.BLUE));
 
         Engine engine = new Engine(tris);
-        engine.render();
 
         Viewer viewer = new Viewer(engine);
+
+        viewer.render();
 
     }
 }
