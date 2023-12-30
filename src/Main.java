@@ -23,8 +23,6 @@ public class Main {
         Engine engine = new Engine(tris);
 
         Viewer viewer = new Viewer(engine);
-
-        viewer.render();
-
+        viewer.update();
     }
 }

@@ -122,6 +122,12 @@ public class Engine {
         return result;
     }
 
+    private static ArrayList<Triangle> zoom(List<Triangle> tris) {
+        ArrayList<Triangle> result = new ArrayList<>();
+
+        return result;
+    }
+
     private static ArrayList<Object> deepCopy(List<Object> list) {
         ArrayList<Object> copy = new ArrayList<>();
 
