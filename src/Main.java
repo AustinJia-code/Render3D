@@ -1,4 +1,3 @@
-import javax.swing.text.View;
 import java.awt.Color;
 import java.util.*;
 public class Main {
@@ -21,7 +20,10 @@ public class Main {
                 new Vertex(-100, -100, 100),
                 Color.BLUE));
 
-        Viewer viewer = new Viewer(tris);
-        viewer.render();
+        Engine engine = new Engine(tris);
+        engine.render();
+
+        Viewer viewer = new Viewer(engine);
+
     }
 }
