@@ -11,11 +11,13 @@ public class Engine {
 
     }
 
-    public void calculate(BufferedImage img, int inflateSlider, int headingSlider, int pitchSlider) {
+    public void calculate(BufferedImage img, int inflateSlider, int headingSlider, int pitchSlider, int zoomSlider) {
         ArrayList<Triangle> tris = deepCopy((List)triangles);
         for (int i = 0; i < inflateSlider; i++) {
             tris = inflate(tris);
         }
+
+        tris = zoom(tris, zoomSlider / 100.0);
 
         double heading = Math.toRadians(headingSlider);
         Matrix3 headingTransform = new Matrix3(new double[] {
@@ -122,8 +124,15 @@ public class Engine {
         return result;
     }
 
-    private static ArrayList<Triangle> zoom(List<Triangle> tris) {
+    private static ArrayList<Triangle> zoom(List<Triangle> tris, double multiplier) {
         ArrayList<Triangle> result = new ArrayList<>();
+
+        for (Triangle t : tris) {
+            Vertex m1 = new Vertex(t.v1.x * multiplier, t.v1.y * multiplier, t.v1.z * multiplier);
+            Vertex m2 = new Vertex(t.v2.x * multiplier, t.v2.y * multiplier, t.v2.z * multiplier);
+            Vertex m3 = new Vertex(t.v3.x * multiplier, t.v3.y * multiplier, t.v3.z * multiplier);
+            result.add(new Triangle(m1, m2, m3, t.color));
+        }
 
         return result;
     }

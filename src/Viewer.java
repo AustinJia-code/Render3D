@@ -23,7 +23,7 @@ public class Viewer{
     JLabel dummy;
     JFrame frame;
     Container pane;
-    JSlider pitchSlider, inflateSlider, headingSlider;
+    JSlider pitchSlider, inflateSlider, headingSlider, zoomSlider;
     Engine engine;
     Boolean[] arrowsPressed;
     Listener listener;
@@ -36,6 +36,7 @@ public class Viewer{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         listener = new Listener();
         frame.addKeyListener(listener);
+        frame.addMouseWheelListener(listener);
 
         pane = frame.getContentPane();
         pane.setLayout(new BorderLayout());
@@ -57,6 +58,12 @@ public class Viewer{
         pane.add(inflateSlider, BorderLayout.NORTH);
         inflateSlider.addChangeListener(e -> renderPanel.repaint());
         inflateSlider.setFocusable(false);
+
+        // slider to control zoom, zoom% calculated with value * 1%
+        zoomSlider = new JSlider(SwingConstants.VERTICAL, 20, 500, 100);
+        pane.add(zoomSlider, BorderLayout.WEST);
+        zoomSlider.addChangeListener(e -> renderPanel.repaint());
+        zoomSlider.setFocusable(false);
 
         arrowsPressed = new Boolean[4];
         for (int i = 0; i < arrowsPressed.length; i++) {
@@ -96,7 +103,7 @@ public class Viewer{
 
                 BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
-                engine.calculate(img, inflateSlider.getValue(), headingSlider.getValue(), pitchSlider.getValue());
+                engine.calculate(img, inflateSlider.getValue(), headingSlider.getValue(), pitchSlider.getValue(), zoomSlider.getValue());
 
                 g2.drawImage(img, 0, 0, null);
             }
@@ -110,8 +117,13 @@ public class Viewer{
     public void update() {
         boolean exit = false;
         long counter = 0;
+
         while (!exit) {
-            //System.out.println(listener.right);
+            if (!listener.mouseAccountedFor) {
+                incrementSlider(zoomSlider, listener.changeInRotation * 5);
+                listener.mouseAccountedFor = true;
+            }
+
             if (counter++ == 100000000) {
                 if (listener.right) {
                     incrementSlider(headingSlider, 1);
@@ -184,5 +196,6 @@ public class Viewer{
         incrementSlider(inflateSlider, -inflateSlider.getValue());
         incrementSlider(headingSlider, -headingSlider.getValue());
         incrementSlider(pitchSlider, -pitchSlider.getValue());
+        incrementSlider(zoomSlider, -(zoomSlider.getValue() - 100));
     }
 }

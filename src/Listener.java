@@ -1,12 +1,16 @@
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
-public class Listener implements KeyListener {
+public class Listener implements KeyListener, MouseWheelListener {
     boolean up;
     boolean down;
     boolean left;
     boolean right;
     boolean space;
+    int changeInRotation;
+    boolean mouseAccountedFor = true;
     @Override
     public void keyTyped(KeyEvent e) {
     }
@@ -51,5 +55,11 @@ public class Listener implements KeyListener {
                 space = false;
                 break;
         }
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        changeInRotation = -e.getWheelRotation();
+        mouseAccountedFor = false;
     }
 }
