@@ -11,6 +11,10 @@ public class Engine {
 
     }
 
+    public void setData(ArrayList<Triangle> triangles) {
+        this.triangles = triangles;
+    }
+
     public void calculate(BufferedImage img, int inflateSlider, int headingSlider, int pitchSlider, int zoomSlider) {
         ArrayList<Triangle> tris = deepCopy((List)triangles);
         for (int i = 0; i < inflateSlider; i++) {

@@ -2,6 +2,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,7 +17,9 @@ import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 
 public class Viewer{
     JPanel renderPanel;
@@ -24,13 +27,15 @@ public class Viewer{
     JFrame frame;
     Container pane;
     JSlider pitchSlider, inflateSlider, headingSlider, zoomSlider;
+    JComboBox menu;
     Engine engine;
     Boolean[] arrowsPressed;
     Listener listener;
-    // create zoom actions
+    TRIParser files;
 
-    public Viewer(Engine engine) {
+    public Viewer(Engine engine, TRIParser files) {
         this.engine = engine;
+        this.files = files;
 
         frame = new JFrame("3D Viewer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -108,6 +113,22 @@ public class Viewer{
                 g2.drawImage(img, 0, 0, null);
             }
         };
+        // add dropdown menu for files
+        menu = new JComboBox(files.getFileNames());
+        menu.setSize(150, 30);
+        menu.setFocusable(false);
+        menu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    engine.setData(files.parse(menu.getSelectedIndex()));
+                    renderPanel.repaint();
+                } catch (FileNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        renderPanel.add(menu);
         pane.add(renderPanel, BorderLayout.CENTER);
 
         frame.setSize(400, 400);
@@ -126,16 +147,16 @@ public class Viewer{
 
             if (counter++ == 100000000) {
                 if (listener.right) {
-                    incrementSlider(headingSlider, 1);
+                    incrementSlider(headingSlider, 2);
                 }
                 if (listener.left) {
-                    incrementSlider(headingSlider, -1);
+                    incrementSlider(headingSlider, -2);
                 }
                 if (listener.up) {
-                    incrementSlider(pitchSlider, 1);
+                    incrementSlider(pitchSlider, 2);
                 }
                 if (listener.down) {
-                    incrementSlider(pitchSlider, -1);
+                    incrementSlider(pitchSlider, -2);
                 }
                 if (listener.space) {
                     reset();
